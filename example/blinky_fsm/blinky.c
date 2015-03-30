@@ -7,10 +7,9 @@
 
 /*=========================================================  INCLUDE FILES  ==*/
 
-#include "base/port/core.h"
-#include "kernel/sched.h"
-#include "kernel/mm/mem.h"
-#include "kernel/mm/heap.h"
+#include "port/core.h"
+#include "sched/sched.h"
+#include "mm/heap.h"
 #include "eds/etimer.h"
 #include "eds/event.h"
 #include "eds/smp.h"
@@ -26,6 +25,11 @@ struct blinky_workspace
     struct netimer              period;
 };
 
+enum blinky_local_events
+{
+    BLINKY_PERIOD_ELAPSED       = NEVENT_USER_ID
+};
+
 /*=============================================  LOCAL FUNCTION PROTOTYPES  ==*/
 
 static naction state_init(struct nsm *, const struct nevent *);
@@ -36,9 +40,9 @@ static naction state_off (struct nsm *, const struct nevent *);
 
 static struct nepa              g_blinky_epa;
 static struct nevent *          g_blinky_queue_storage[10];
-static struct nheap             g_blinky_mem;
-static uint8_t                  g_blinky_mem_storage[1024];
 static struct blinky_workspace  g_blinky_workspace;
+static struct nheap             g_event_mem;
+static uint8_t                  g_event_mem_storage[1024];
 
 static const struct nepa_define g_blinky_define =
 {
@@ -47,25 +51,81 @@ static const struct nepa_define g_blinky_define =
     .sm.type                    = NSM_TYPE_FSM,
     .working_queue.storage      = g_blinky_queue_storage,
     .working_queue.size         = sizeof(g_blinky_queue_storage),
-    .thread.priority            = 1
+    .thread.priority            = 1,
+    .thread.name                = "blinky"
 };
 
 /*======================================================  GLOBAL VARIABLES  ==*/
 /*============================================  LOCAL FUNCTION DEFINITIONS  ==*/
 
+
 static naction state_init(struct nsm * sm, const struct nevent * event)
 {
-    return (NACTION_HANDLED);
+    struct blinky_workspace *   ws = sm->wspace;
+
+    switch (event->id) {
+        case NSMP_INIT: {
+            netimer_init(&ws->period);
+
+            return (naction_transit_to(sm, state_on));
+        }
+        case NSMP_SUPER: {
+            return (naction_super(sm, ntop_state));
+        }
+        default: {
+            return (naction_ignored());
+        }
+    }
 }
 
-static naction state_on  (struct nsm * sm, const struct nevent * event)
+
+
+static naction state_on(struct nsm * sm, const struct nevent * event)
 {
-    return (NACTION_HANDLED);
+    struct blinky_workspace *   ws = sm->wspace;
+
+    switch (event->id) {
+        case NSMP_ENTRY: {
+            netimer_after(&ws->period, N_TIME_TO_TICK_MS(500), BLINKY_PERIOD_ELAPSED);
+            bsp_led_on();
+
+            return (naction_handled());
+        }
+        case NSMP_SUPER: {
+            return (naction_super(sm, ntop_state));
+        }
+        case BLINKY_PERIOD_ELAPSED: {
+            return (naction_transit_to(sm, state_off));
+        }
+        default: {
+            return (naction_ignored());
+        }
+    }
 }
 
-static naction state_off (struct nsm * sm, const struct nevent * event)
+
+
+static naction state_off(struct nsm * sm, const struct nevent * event)
 {
-    return (NACTION_HANDLED);
+    struct blinky_workspace *   ws = sm->wspace;
+
+    switch (event->id) {
+        case NSMP_ENTRY: {
+            netimer_after(&ws->period, N_TIME_TO_TICK_MS(500), BLINKY_PERIOD_ELAPSED);
+            bsp_led_off();
+
+            return (naction_handled());
+        }
+        case NSMP_SUPER: {
+            return (naction_super(sm, ntop_state));
+        }
+        case BLINKY_PERIOD_ELAPSED: {
+            return (naction_transit_to(sm, state_on));
+        }
+        default: {
+            return (naction_ignored());
+        }
+    }
 }
 
 /*===========================================  GLOBAL FUNCTION DEFINITIONS  ==*/
@@ -74,16 +134,16 @@ int main(void)
 {
     bsp_init();
 
-    nmodule_core_init();
-    nmodule_sched_init();
+    ncore_init();
     ncore_timer_enable();
+    nsched_init();
 
-    nheap_init(&g_blinky_mem, g_blinky_mem_storage, sizeof(g_blinky_mem_storage));
-    nevent_register_mem(&g_blinky_mem.mem_class);
+    nheap_init(&g_event_mem, g_event_mem_storage, sizeof(g_event_mem_storage));
+    nevent_register_mem(&g_event_mem.mem_class);
     nepa_init(&g_blinky_epa, &g_blinky_define);
     neds_run();
 
-    for (;;);
+    return (0);
 }
 
 PORT_C_NORETURN
