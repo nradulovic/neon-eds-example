@@ -1,8 +1,5 @@
 /*
- * This file is part of Neon.
- *
- * Copyright (C) 2010 - 2015 Nenad Radulovic
- *
+ * This file is part of Neon examples.
  */
 
 /*=========================================================  INCLUDE FILES  ==*/
@@ -18,6 +15,9 @@
 #include "bsp.h"
 
 /*=========================================================  LOCAL MACRO's  ==*/
+
+#define BLINKY_PERIOD                   N_TIME_TO_TICK_MS(300)
+
 /*======================================================  LOCAL DATA TYPES  ==*/
 
 struct blinky_workspace
@@ -66,11 +66,9 @@ static naction state_init(struct nsm * sm, const struct nevent * event)
     switch (event->id) {
         case NSMP_INIT: {
             netimer_init(&ws->period);
+            netimer_every(&ws->period, BLINKY_PERIOD, BLINKY_PERIOD_ELAPSED);
 
             return (naction_transit_to(sm, state_on));
-        }
-        case NSMP_SUPER: {
-            return (naction_super(sm, ntop_state));
         }
         default: {
             return (naction_ignored());
@@ -86,13 +84,9 @@ static naction state_on(struct nsm * sm, const struct nevent * event)
 
     switch (event->id) {
         case NSMP_ENTRY: {
-            netimer_after(&ws->period, N_TIME_TO_TICK_MS(500), BLINKY_PERIOD_ELAPSED);
             bsp_led_on();
 
             return (naction_handled());
-        }
-        case NSMP_SUPER: {
-            return (naction_super(sm, ntop_state));
         }
         case BLINKY_PERIOD_ELAPSED: {
             return (naction_transit_to(sm, state_off));
@@ -111,13 +105,9 @@ static naction state_off(struct nsm * sm, const struct nevent * event)
 
     switch (event->id) {
         case NSMP_ENTRY: {
-            netimer_after(&ws->period, N_TIME_TO_TICK_MS(500), BLINKY_PERIOD_ELAPSED);
             bsp_led_off();
 
             return (naction_handled());
-        }
-        case NSMP_SUPER: {
-            return (naction_super(sm, ntop_state));
         }
         case BLINKY_PERIOD_ELAPSED: {
             return (naction_transit_to(sm, state_on));
@@ -129,6 +119,7 @@ static naction state_off(struct nsm * sm, const struct nevent * event)
 }
 
 /*===========================================  GLOBAL FUNCTION DEFINITIONS  ==*/
+
 
 int main(void)
 {
@@ -145,6 +136,8 @@ int main(void)
 
     return (0);
 }
+
+
 
 PORT_C_NORETURN
 void hook_at_assert(
