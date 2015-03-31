@@ -18,19 +18,35 @@
  *
  * web site:    
  * e-mail  :    
- *//***********************************************************************//**
- * @file
- * @author      nenad
- * @brief       Brief description
- * @defgroup    def_group Name
- * @brief       Brief description
- *********************************************************************//** @{ */
+ */
 
-#ifndef BLINKY_FSM_STM32F4XX_BSP_H_
-#define BLINKY_FSM_STM32F4XX_BSP_H_
+#ifndef NEON_APP_CONFIG_H_
+#define NEON_APP_CONFIG_H_
 
 /*=========================================================  INCLUDE FILES  ==*/
 /*===============================================================  MACRO's  ==*/
+
+# define CONFIG_DEBUG                   1
+# define CONFIG_API_VALIDATION          1
+# define CONFIG_ASSERT_INTERNAL         1
+# define CONFIG_CORE_LOCK_MAX_LEVEL     255u
+# define CONFIG_CORE_TIMER_SOURCE       3
+# define CONFIG_CORE_TIMER_CLOCK_FREQ   16800000ul
+# define CONFIG_CORE_TIMER_EVENT_FREQ   100ul
+# define CONFIG_PRIORITY_LEVELS         32u
+# define CONFIG_PRIORITY_BUCKETS        32u
+# define CONFIG_REGISTRY                1u
+# define CONFIG_REGISTRY_NAME_SIZE      16u
+# define CONFIG_EVENT_STRUCT_ATTRIBUTE
+# define CONFIG_EVENT_SIZE              1
+# define CONFIG_EVENT_PRODUCER          1
+# define CONFIG_EVENT_STORAGE_NPOOLS    2
+# define CONFIG_SMP_HSM                 1
+# define CONFIG_GPIO                    0
+# define CONFIG_UART                    0
+# define CONFIG_I2C                     0
+# define CONFIG_SPI                     0
+
 /*-------------------------------------------------------  C++ extern base  --*/
 #ifdef __cplusplus
 extern "C" {
@@ -39,9 +55,6 @@ extern "C" {
 /*============================================================  DATA TYPES  ==*/
 /*======================================================  GLOBAL VARIABLES  ==*/
 /*===================================================  FUNCTION PROTOTYPES  ==*/
-
-void bsp_init(void);
-
 /*--------------------------------------------------------  C++ extern end  --*/
 #ifdef __cplusplus
 }
@@ -49,6 +62,6 @@ void bsp_init(void);
 
 /*================================*//** @cond *//*==  CONFIGURATION ERRORS  ==*/
 /** @endcond *//** @} *//******************************************************
- * END of bsp.h
+ * END of neon_app_config.h
  ******************************************************************************/
-#endif /* BLINKY_FSM_STM32F4XX_BSP_H_ */
+#endif /* NEON_APP_CONFIG_H_ */

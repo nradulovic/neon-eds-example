@@ -1,23 +1,7 @@
 /*
- * This file is part of neon-test.
+ * This file is part of Neon-test.
  *
- * Copyright (C) 2010 - 2015 nenad
- *
- * neon-test is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * neon-test is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with neon-test.  If not, see <http://www.gnu.org/licenses/>.
- *
- * web site:    
- * e-mail  :    
+ * Neon application configuration for: x86_64 Linux
  */
 
 #ifndef NEON_APP_CONFIG_H_
@@ -31,7 +15,7 @@
 # define CONFIG_ASSERT_INTERNAL         1
 # define CONFIG_CORE_LOCK_MAX_LEVEL     255u
 # define CONFIG_CORE_TIMER_SOURCE       0
-# define CONFIG_CORE_TIMER_CLOCK_FREQ   16800000ul
+# define CONFIG_CORE_TIMER_CLOCK_FREQ   1000000000ul
 # define CONFIG_CORE_TIMER_EVENT_FREQ   100ul
 # define CONFIG_PRIORITY_LEVELS         32u
 # define CONFIG_PRIORITY_BUCKETS        32u

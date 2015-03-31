@@ -22,35 +22,35 @@
  * @file
  * @author      nenad
  * @brief       Brief description
+ * @defgroup    def_group Name
+ * @brief       Brief description
  *********************************************************************//** @{ */
-/**@defgroup    def_impl Implementation
- * @brief       Default Implementation
- * @{ *//*--------------------------------------------------------------------*/
+
+#ifndef BLINKY_FSM_STM32F4XX_BSP_H_
+#define BLINKY_FSM_STM32F4XX_BSP_H_
 
 /*=========================================================  INCLUDE FILES  ==*/
+/*===============================================================  MACRO's  ==*/
+/*-------------------------------------------------------  C++ extern base  --*/
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include "bsp.h"
-#include "stm32f4xx.h"
-
-/*=========================================================  LOCAL MACRO's  ==*/
-/*======================================================  LOCAL DATA TYPES  ==*/
-/*=============================================  LOCAL FUNCTION PROTOTYPES  ==*/
-/*=======================================================  LOCAL VARIABLES  ==*/
+/*============================================================  DATA TYPES  ==*/
 /*======================================================  GLOBAL VARIABLES  ==*/
-/*============================================  LOCAL FUNCTION DEFINITIONS  ==*/
-/*===========================================  GLOBAL FUNCTION DEFINITIONS  ==*/
+/*===================================================  FUNCTION PROTOTYPES  ==*/
 
-void bsp_init(void)
-{
-    HAL_Init();
+void bsp_init(void);
+void bsp_led_on(void);
+void bsp_led_off(void);
+
+/*--------------------------------------------------------  C++ extern end  --*/
+#ifdef __cplusplus
 }
-
-void assert_failed(uint8_t* file, uint32_t line)
-{
-
-}
+#endif
 
 /*================================*//** @cond *//*==  CONFIGURATION ERRORS  ==*/
-/** @endcond *//** @} *//** @} *//*********************************************
- * END of bsp.c
+/** @endcond *//** @} *//******************************************************
+ * END of bsp.h
  ******************************************************************************/
+#endif /* BLINKY_FSM_STM32F4XX_BSP_H_ */
