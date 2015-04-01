@@ -5,7 +5,6 @@
 
 </language>
 <language name="C Source File">
-<includepath workspace_path="true">/${ProjName}/example/blinky_fsm/port/stm32f4xx-hal</includepath>
 <includepath workspace_path="true">/${ProjName}/neon/base/include</includepath>
 <includepath workspace_path="true">/${ProjName}/neon/drivers/include</includepath>
 <includepath workspace_path="true">/${ProjName}/neon/drivers/port/arm-none-eabi-gcc/stm32f</includepath>
@@ -13,6 +12,7 @@
 <includepath workspace_path="true">/${ProjName}/neon/kernel/include</includepath>
 <includepath workspace_path="true">/${ProjName}/neon/lib/include</includepath>
 <includepath workspace_path="true">/${ProjName}/neon/base/port/stm32f4xx-none-gcc</includepath>
+<includepath workspace_path="true">/${ProjName}/port/stm32f4xx-hal</includepath>
 
 </language>
 <language name="Object File">
