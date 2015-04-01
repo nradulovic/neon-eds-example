@@ -23,14 +23,14 @@
 
 /*======================================================  LOCAL DATA TYPES  ==*/
 
-struct blinky_workspace
+struct hart_beat_workspace
 {
     struct netimer              period;
 };
 
-enum blinky_local_events
+enum hart_beat_local_events
 {
-    BLINKY_PERIOD_ELAPSED       = NEVENT_USER_ID
+    PERIOD_ELAPSED       = NEVENT_USER_ID
 };
 
 /*=============================================  LOCAL FUNCTION PROTOTYPES  ==*/
@@ -43,21 +43,21 @@ static naction state_long (struct nsm *, const struct nevent *);
 
 /*=======================================================  LOCAL VARIABLES  ==*/
 
-static struct nepa              g_blinky_epa;
-static struct nevent *          g_blinky_queue_storage[10];
-static struct blinky_workspace  g_blinky_workspace;
+static struct nepa              g_hart_beat_epa;
+static struct nevent *          g_hart_beat_queue_storage[10];
+static struct hart_beat_workspace  g_hart_beat_workspace;
 static struct nheap             g_event_mem;
 static uint8_t                  g_event_mem_storage[1024];
 
-static const struct nepa_define g_blinky_define =
+static const struct nepa_define g_hart_beat_define =
 {
-    .sm.wspace                  = &g_blinky_workspace,
+    .sm.wspace                  = &g_hart_beat_workspace,
     .sm.init_state              = &state_init,
     .sm.type                    = NSM_TYPE_FSM,
-    .working_queue.storage      = g_blinky_queue_storage,
-    .working_queue.size         = sizeof(g_blinky_queue_storage),
+    .working_queue.storage      = g_hart_beat_queue_storage,
+    .working_queue.size         = sizeof(g_hart_beat_queue_storage),
     .thread.priority            = 1,
-    .thread.name                = "blinky"
+    .thread.name                = "hart_beat"
 };
 
 /*======================================================  GLOBAL VARIABLES  ==*/
@@ -66,7 +66,7 @@ static const struct nepa_define g_blinky_define =
 
 static naction state_init(struct nsm * sm, const struct nevent * event)
 {
-    struct blinky_workspace *   ws = sm->wspace;
+    struct hart_beat_workspace *   ws = sm->wspace;
 
     switch (event->id) {
         case NSMP_INIT: {
@@ -84,15 +84,15 @@ static naction state_init(struct nsm * sm, const struct nevent * event)
 
 static naction state_pause(struct nsm * sm, const struct nevent * event)
 {
-    struct blinky_workspace *   ws = sm->wspace;
+    struct hart_beat_workspace *   ws = sm->wspace;
 
     switch (event->id) {
         case NSMP_ENTRY: {
-            netimer_after(&ws->period, PERIOD_PAUSE, BLINKY_PERIOD_ELAPSED);
+            netimer_after(&ws->period, PERIOD_PAUSE, PERIOD_ELAPSED);
 
             return (naction_handled());
         }
-        case BLINKY_PERIOD_ELAPSED: {
+        case PERIOD_ELAPSED: {
             return (naction_transit_to(sm, state_short));
         }
         default: {
@@ -105,11 +105,11 @@ static naction state_pause(struct nsm * sm, const struct nevent * event)
 
 static naction state_short(struct nsm * sm, const struct nevent * event)
 {
-    struct blinky_workspace *   ws = sm->wspace;
+    struct hart_beat_workspace *   ws = sm->wspace;
 
     switch (event->id) {
         case NSMP_ENTRY: {
-            netimer_after(&ws->period, PERIOD_SHORT, BLINKY_PERIOD_ELAPSED);
+            netimer_after(&ws->period, PERIOD_SHORT, PERIOD_ELAPSED);
             bsp_led_on();
 
             return (naction_handled());
@@ -119,7 +119,7 @@ static naction state_short(struct nsm * sm, const struct nevent * event)
 
             return (naction_handled());
         }
-        case BLINKY_PERIOD_ELAPSED: {
+        case PERIOD_ELAPSED: {
             return (naction_transit_to(sm, state_delay));
         }
         default: {
@@ -132,15 +132,15 @@ static naction state_short(struct nsm * sm, const struct nevent * event)
 
 static naction state_delay(struct nsm * sm, const struct nevent * event)
 {
-    struct blinky_workspace *   ws = sm->wspace;
+    struct hart_beat_workspace *   ws = sm->wspace;
 
     switch (event->id) {
         case NSMP_ENTRY: {
-            netimer_after(&ws->period, PERIOD_DELAY, BLINKY_PERIOD_ELAPSED);
+            netimer_after(&ws->period, PERIOD_DELAY, PERIOD_ELAPSED);
 
             return (naction_handled());
         }
-        case BLINKY_PERIOD_ELAPSED: {
+        case PERIOD_ELAPSED: {
             return (naction_transit_to(sm, state_long));
         }
         default: {
@@ -153,11 +153,11 @@ static naction state_delay(struct nsm * sm, const struct nevent * event)
 
 static naction state_long(struct nsm * sm, const struct nevent * event)
 {
-    struct blinky_workspace *   ws = sm->wspace;
+    struct hart_beat_workspace *   ws = sm->wspace;
 
     switch (event->id) {
         case NSMP_ENTRY: {
-            netimer_after(&ws->period, PERIOD_LONG, BLINKY_PERIOD_ELAPSED);
+            netimer_after(&ws->period, PERIOD_LONG, PERIOD_ELAPSED);
             bsp_led_on();
 
             return (naction_handled());
@@ -167,7 +167,7 @@ static naction state_long(struct nsm * sm, const struct nevent * event)
 
             return (naction_handled());
         }
-        case BLINKY_PERIOD_ELAPSED: {
+        case PERIOD_ELAPSED: {
             return (naction_transit_to(sm, state_pause));
         }
         default: {
@@ -189,7 +189,7 @@ int main(void)
 
     nheap_init(&g_event_mem, g_event_mem_storage, sizeof(g_event_mem_storage));
     nevent_register_mem(&g_event_mem.mem_class);
-    nepa_init(&g_blinky_epa, &g_blinky_define);
+    nepa_init(&g_hart_beat_epa, &g_hart_beat_define);
     neds_run();
 
     return (0);
@@ -216,5 +216,5 @@ void hook_at_assert(
 
 /*================================*//** @cond *//*==  CONFIGURATION ERRORS  ==*/
 /** @endcond *//***************************************************************
- * END of blinky.c
+ * END of hart_beat.c
  ******************************************************************************/
