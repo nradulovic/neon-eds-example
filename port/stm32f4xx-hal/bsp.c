@@ -19,7 +19,7 @@
 #define LED_GPIO_PORT                           GPIOG
 #define LED_GPIO_CLK_ENABLE()                   __GPIOG_CLK_ENABLE()
 #define LED_GPIO_CLK_DISABLE()                  __GPIOG_CLK_DISABLE()
-#elif (STM_BOARD_NUCLEO_F411RE== 1)
+#elif (STM_BOARD_NUCLEO_F411RE == 1)
 #define LED_PIN                                 GPIO_PIN_5
 #define LED_GPIO_PORT                           GPIOA
 #define LED_GPIO_CLK_ENABLE()                   __GPIOA_CLK_ENABLE()
@@ -90,7 +90,7 @@ static void SystemClock_Config(void)
     RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
     HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5);
 }
-#elif (STM_BOARD_NUCLEO_F411RE== 1)
+#elif (STM_BOARD_NUCLEO_F411RE == 1)
 /**
   * @brief  System Clock Configuration
   *         The system Clock is configured as follow :
