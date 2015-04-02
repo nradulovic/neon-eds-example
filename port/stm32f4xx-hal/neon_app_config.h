@@ -31,7 +31,11 @@
 # define CONFIG_ASSERT_INTERNAL         1
 # define CONFIG_CORE_LOCK_MAX_LEVEL     255u
 # define CONFIG_CORE_TIMER_SOURCE       3
-# define CONFIG_CORE_TIMER_CLOCK_FREQ   16800000ul
+#if defined(STM32F429xx)
+# define CONFIG_CORE_TIMER_CLOCK_FREQ   (SystemCoreClock / 4)
+#elif defined(STM32F411xE)
+# define CONFIG_CORE_TIMER_CLOCK_FREQ   (SystemCoreClock / 2)
+#endif
 # define CONFIG_CORE_TIMER_EVENT_FREQ   100ul
 # define CONFIG_PRIORITY_LEVELS         32u
 # define CONFIG_PRIORITY_BUCKETS        32u
