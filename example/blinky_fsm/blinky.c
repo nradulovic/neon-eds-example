@@ -4,13 +4,7 @@
 
 /*=========================================================  INCLUDE FILES  ==*/
 
-#include "port/core.h"
-#include "sched/sched.h"
-#include "mm/heap.h"
-#include "eds/etimer.h"
-#include "eds/event.h"
-#include "eds/smp.h"
-#include "eds/epa.h"
+#include "neon_eds.h"
 
 #include "bsp.h"
 
