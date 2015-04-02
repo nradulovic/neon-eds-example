@@ -1,0 +1,3 @@
+[submodule "neon-eds"]
+	path = neon-eds
+	url = http://github.com/nradulovic/neon-eds.git
