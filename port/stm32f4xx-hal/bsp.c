@@ -11,8 +11,8 @@
 
 /*=========================================================  LOCAL MACRO's  ==*/
 
-#define STM_BOARD_STM32F429I_DISCO      1
-#define STM_BOARD_NUCLEO_F411RE         0
+#define STM_BOARD_STM32F429I_DISCO      0
+#define STM_BOARD_NUCLEO_F411RE         1
 
 #if (STM_BOARD_STM32F429I_DISCO == 1)
 #define LED_PIN                                 GPIO_PIN_13
