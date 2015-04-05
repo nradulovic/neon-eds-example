@@ -17,6 +17,12 @@
 
 /*======================================================  LOCAL DATA TYPES  ==*/
 
+/* This is Heart Beat workspace. The workspace is visible only to this EPA.
+ *
+ * When creating threads there is usually an API to supply initial arguments to
+ * newly created thread. In this case if you need to pass some initialisation
+ * data to the EPA this is done through an event.
+ */
 struct workspace
 {
     struct netimer              period;
@@ -37,19 +43,14 @@ static naction state_long (struct nsm *, const struct nevent *);
 
 /*=======================================================  LOCAL VARIABLES  ==*/
 
-static struct nepa              g_heart_beat_epa;
-static struct nevent *          g_heart_beat_queue_storage[10];
-static struct workspace         g_heart_beat_workspace;
 static struct nheap             g_event_mem;
 static uint8_t                  g_event_mem_storage[1024];
 
 static const struct nepa_define g_heart_beat_define =
 {
-    .sm.wspace                  = &g_heart_beat_workspace,
     .sm.init_state              = &state_init,
     .sm.type                    = NSM_TYPE_FSM,
-    .working_queue.storage      = g_heart_beat_queue_storage,
-    .working_queue.size         = sizeof(g_heart_beat_queue_storage),
+    .working_queue.size         = NEQUEUE_SIZEOF(10),
     .thread.priority            = 1,
     .thread.name                = "heart_beat"
 };
@@ -60,10 +61,21 @@ static const struct nepa_define g_heart_beat_define =
 
 static naction state_init(struct nsm * sm, const struct nevent * event)
 {
-    struct workspace *          ws = nsm_wspace(sm);
+    struct workspace *          ws;
 
     switch (event->id) {
         case NSM_INIT: {
+            /* Create the workspace with same memory class as EPA was created.
+             */
+            nsm_set_wspace(sm, nepa_new_storage(sizeof(struct workspace)));
+
+            /* Get the new workspace
+             */
+            ws = nsm_wspace(sm);
+
+            /* Initialise the event timer which will be used for various LED
+             * timing.
+             */
             netimer_init(&ws->period);
 
             return (naction_transit_to(sm, state_pause));
@@ -208,9 +220,11 @@ int main(void)
      */
     nevent_register_mem(&g_event_mem.mem_class);
 
-    /* Initialise the EPA.
+    /* Create an EPA. The function nepa_create() returns a pointer to newly
+     * created EPA, but in this example we don't need it. This pointer can be
+     * passed between EPA's in order to send events to each other.
      */
-    nepa_init(&g_heart_beat_epa, &g_heart_beat_define);
+    nepa_create(&g_heart_beat_define, &g_event_mem.mem_class);
 
     /* Start the scheduler under Event Processing supervision.
      */

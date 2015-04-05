@@ -55,10 +55,10 @@ static const struct nepa_define g_blinky_define =
 
 static naction state_init(struct nsm * sm, const struct nevent * event)
 {
-    struct blinky_workspace *   ws = sm->wspace;
+    struct blinky_workspace *   ws = nsm_wspace(sm);
 
     switch (event->id) {
-        case NSMP_INIT: {
+        case NSM_INIT: {
             netimer_init(&ws->period);
             netimer_every(&ws->period, BLINKY_PERIOD, BLINKY_PERIOD_ELAPSED);
 
@@ -74,10 +74,10 @@ static naction state_init(struct nsm * sm, const struct nevent * event)
 
 static naction state_on(struct nsm * sm, const struct nevent * event)
 {
-    struct blinky_workspace *   ws = sm->wspace;
+    struct blinky_workspace *   ws = nsm_wspace(sm);
 
     switch (event->id) {
-        case NSMP_ENTRY: {
+        case NSM_ENTRY: {
             bsp_led_on();
 
             return (naction_handled());
@@ -95,10 +95,10 @@ static naction state_on(struct nsm * sm, const struct nevent * event)
 
 static naction state_off(struct nsm * sm, const struct nevent * event)
 {
-    struct blinky_workspace *   ws = sm->wspace;
+    struct blinky_workspace *   ws = nsm_wspace(sm);
 
     switch (event->id) {
-        case NSMP_ENTRY: {
+        case NSM_ENTRY: {
             bsp_led_off();
 
             return (naction_handled());
@@ -117,14 +117,41 @@ static naction state_off(struct nsm * sm, const struct nevent * event)
 
 int main(void)
 {
+    /* Initialise the Board Support Package for this example.
+     * BSP should setup required clocks, power supply for MCU peripherals and
+     * setup GPIO for driving a state LED.
+     */
     bsp_init();
 
+    /* Initialise the portable core. Portable core handles interrupts, timer
+     * and CPU initialisation. After initialisation the core timer is started
+     * so event timer can be used in this example.
+     */
     ncore_init();
     ncore_timer_enable();
+
+    /* Initialise internal scheduler data structures. Event Processing is
+     * relaying on scheduler to provide efficient task switching.
+     */
     nsched_init();
 
+    /* Initialise a memory for events. Since events are dynamic they require
+     * either a heap memory or a pool memory. Currently only Neon Heap and Pool
+     * memory are supported. In the future a standard malloc/free support will
+     * be added.
+     *
+     * Function nheap_init() requires a pointer to heap memory structure,
+     * pointer to statically allocated storage and it's size.
+     */
     nheap_init(&g_event_mem, g_event_mem_storage, sizeof(g_event_mem_storage));
+
+    /* Register the Heap memory for events. New events will allocate memory from
+     * this heap.
+     */
     nevent_register_mem(&g_event_mem.mem_class);
+
+    /* Initialise the EPA.
+     */
     nepa_init(&g_blinky_epa, &g_blinky_define);
     neds_run();
 
