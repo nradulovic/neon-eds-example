@@ -65,9 +65,22 @@ static naction state_init(struct nsm * sm, const struct nevent * event)
 
     switch (event->id) {
         case NSM_INIT: {
+            void *              ws_storage;
+
             /* Create the workspace with same memory class as EPA was created.
              */
-            nsm_set_wspace(sm, nepa_new_storage(sizeof(struct workspace)));
+            ws_storage = nepa_create_storage(sizeof(struct workspace));
+
+            if (!ws_storage) {
+                /* Destroy itself since no workspace storage is available.
+                 */
+                nepa_destroy(nepa_get_current());
+
+                return (naction_ignored());
+            }
+            /* Set the new workspace storage
+             */
+            nsm_set_wspace(sm, ws_storage);
 
             /* Get the new workspace
              */
@@ -215,8 +228,8 @@ int main(void)
      */
     nheap_init(&g_event_mem, g_event_mem_storage, sizeof(g_event_mem_storage));
 
-    /* Register the Heap memory for events. New events will allocate memory from
-     * this heap.
+    /* Register a memory for events memory allocation. New events will allocate
+     * memory from this heap.
      */
     nevent_register_mem(&g_event_mem.mem_class);
 
