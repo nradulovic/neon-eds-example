@@ -10,7 +10,7 @@
 
 /*=========================================================  LOCAL MACRO's  ==*/
 
-#define BLINKY_PERIOD                   N_TIME_TO_TICK_MS(300)
+#define BLINKY_PERIOD                   NTIMER_MS(300)
 
 /*======================================================  LOCAL DATA TYPES  ==*/
 

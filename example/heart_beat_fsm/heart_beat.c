@@ -10,10 +10,10 @@
 
 /*=========================================================  LOCAL MACRO's  ==*/
 
-#define PERIOD_PAUSE                    N_TIME_TO_TICK_MS(1000)
-#define PERIOD_SHORT                    N_TIME_TO_TICK_MS(60)
-#define PERIOD_DELAY                    N_TIME_TO_TICK_MS(180)
-#define PERIOD_LONG                     N_TIME_TO_TICK_MS(180)
+#define PERIOD_PAUSE                    NTIMER_MS(1000)
+#define PERIOD_SHORT                    NTIMER_MS(60)
+#define PERIOD_DELAY                    NTIMER_MS(180)
+#define PERIOD_LONG                     NTIMER_MS(180)
 
 /*======================================================  LOCAL DATA TYPES  ==*/
 
