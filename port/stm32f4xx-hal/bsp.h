@@ -1,33 +1,11 @@
 /*
- * This file is part of neon-test.
+ * This file is part of Neon EDS Example.
  *
- * Copyright (C) 2010 - 2015 nenad
- *
- * neon-test is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * neon-test is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with neon-test.  If not, see <http://www.gnu.org/licenses/>.
- *
- * web site:    
- * e-mail  :    
- *//***********************************************************************//**
- * @file
- * @author      nenad
- * @brief       Brief description
- * @defgroup    def_group Name
- * @brief       Brief description
- *********************************************************************//** @{ */
+ * Board support package source for: stm32f4xx-hal
+ */
 
-#ifndef BLINKY_FSM_STM32F4XX_BSP_H_
-#define BLINKY_FSM_STM32F4XX_BSP_H_
+#ifndef STM32F4XX_HAL_BSP_H_
+#define STM32F4XX_HAL_BSP_H_
 
 /*=========================================================  INCLUDE FILES  ==*/
 /*===============================================================  MACRO's  ==*/
@@ -53,4 +31,4 @@ void bsp_led_off(void);
 /** @endcond *//** @} *//******************************************************
  * END of bsp.h
  ******************************************************************************/
-#endif /* BLINKY_FSM_STM32F4XX_BSP_H_ */
+#endif /* STM32F4XX_HAL_BSP_H_ */

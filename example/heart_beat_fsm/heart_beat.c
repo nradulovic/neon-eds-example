@@ -1,5 +1,7 @@
 /*
- * This file is part of Neon examples.
+ * This file is part of Neon EDS Example.
+ *
+ * Heart Beat FSM
  */
 
 /*=========================================================  INCLUDE FILES  ==*/
