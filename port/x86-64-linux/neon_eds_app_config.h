@@ -4,8 +4,8 @@
  * Neon application configuration for: x86_64 Linux
  */
 
-#ifndef NEON_APP_CONFIG_H_
-#define NEON_APP_CONFIG_H_
+#ifndef NEON_EDS_APP_CONFIG_H_
+#define NEON_EDS_APP_CONFIG_H_
 
 /*=========================================================  INCLUDE FILES  ==*/
 /*===============================================================  MACRO's  ==*/
@@ -48,4 +48,4 @@ extern "C" {
 /** @endcond *//** @} *//******************************************************
  * END of neon_app_config.h
  ******************************************************************************/
-#endif /* NEON_APP_CONFIG_H_ */
+#endif /* NEON_EDS_APP_CONFIG_H_ */
