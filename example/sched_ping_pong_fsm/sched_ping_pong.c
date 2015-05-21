@@ -26,7 +26,7 @@ struct workspace
 
 enum hart_beat_local_events
 {
-    PERIOD_ELAPSED              = NEVENT_USER_ID,
+    PERIOD_ELAPSED              = NEVENT_LOCAL_ID,
 	BLINK
 };
 
@@ -305,6 +305,15 @@ int main(void)
      * this heap.
      */
     nevent_register_mem(&g_event_mem.mem_class);
+
+    /* Register a user implementated IDLE routine. The idle routine is called
+     * when there are no ready EPA for execution. Keep this routine short as
+     * possible because it's execution time may impact system response time.
+     *
+     * When the NULL pointer is given the system will use default ncore_idle()
+     * portable function which usually puts CPU to sleep.
+     */
+    neds_set_idle(NULL);
 
     /* Initialise the EPA.
      */
