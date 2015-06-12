@@ -1,6 +1,6 @@
-[submodule "neon-eds"]
-	path = neon-eds
-	url = http://github.com/nradulovic/neon-eds.git
 [submodule "port/stm32f4xx-hal/stm32cubef4"]
 	path = port/stm32f4xx-hal/stm32cubef4
 	url = http://bitbucket.org/nradulovic/stm32cubef4.git
+[submodule "neon"]
+	path = neon
+	url = http://github.org/nradulovic/neon.git
