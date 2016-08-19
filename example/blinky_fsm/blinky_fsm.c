@@ -41,11 +41,8 @@ static struct nheap             g_event_mem;
 static uint8_t                  g_event_mem_storage[1024];
 
 static const struct nepa_define g_blinky_define =
-{
-    NSM_DEF_INIT(&g_blinky_workspace, &state_init, NSM_TYPE_FSM),
-    NEQUEUE_DEF_INIT(g_blinky_queue_storage, sizeof(g_blinky_queue_storage)),
-    NTHREAD_DEF_INIT("blinky", 1)
-};
+    NEPA_DEF_INIT(&g_blinky_workspace, &state_init, NSM_TYPE_FSM,
+            g_blinky_queue_storage, sizeof(g_blinky_queue_storage), "blinky", 1);
 
 /*======================================================  GLOBAL VARIABLES  ==*/
 /*============================================  LOCAL FUNCTION DEFINITIONS  ==*/
@@ -59,7 +56,6 @@ static naction state_init(struct nsm * sm, const struct nevent * event)
         case NSM_INIT: {
             netimer_init(&ws->period);
             netimer_every(&ws->period, BLINKY_PERIOD, BLINKY_PERIOD_ELAPSED);
-            bsp_led_init();
 
             return (naction_transit_to(sm, state_on));
         }
@@ -73,11 +69,9 @@ static naction state_init(struct nsm * sm, const struct nevent * event)
 
 static naction state_on(struct nsm * sm, const struct nevent * event)
 {
-    struct blinky_workspace *   ws = nsm_wspace(sm);
-
     switch (event->id) {
         case NSM_ENTRY: {
-            bsp_led_on();
+            printf("state_on\n");
 
             return (naction_handled());
         }
@@ -94,11 +88,9 @@ static naction state_on(struct nsm * sm, const struct nevent * event)
 
 static naction state_off(struct nsm * sm, const struct nevent * event)
 {
-    struct blinky_workspace *   ws = nsm_wspace(sm);
-
     switch (event->id) {
         case NSM_ENTRY: {
-            bsp_led_off();
+            printf("state_off\n");
 
             return (naction_handled());
         }
@@ -114,7 +106,7 @@ static naction state_off(struct nsm * sm, const struct nevent * event)
 /*===========================================  GLOBAL FUNCTION DEFINITIONS  ==*/
 
 
-int example_blinky(void)
+int main(void)
 {
     /* Initialise the portable core. Portable core handles interrupts, timer
      * and CPU initialisation. After initialisation the core timer is started
@@ -138,19 +130,11 @@ int example_blinky(void)
      */
     nevent_register_mem(&g_event_mem.mem_class);
 
-    /* Register a user implemented IDLE routine. The idle routine is called
-     * when there are no ready EPA for execution. Keep this routine short as
-     * possible because it's execution time may impact system response time.
-     *
-     * When the NULL pointer is given the system will use default ncore_idle()
-     * portable function which usually puts CPU to sleep.
-     */
-    neds_set_idle(NULL);
-
     /* Initialise the EPA.
      */
     nepa_init(&g_blinky_epa, &g_blinky_define);
-    neds_run();
+
+    nsched_run();
 
     return (0);
 }

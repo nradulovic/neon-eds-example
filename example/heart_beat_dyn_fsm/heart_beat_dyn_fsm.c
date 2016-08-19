@@ -49,13 +49,8 @@ static struct nheap             g_event_mem;
 static uint8_t                  g_event_mem_storage[1024];
 
 static const struct nepa_define g_heart_beat_define =
-{
-    .sm.init_state              = &state_init,
-    .sm.type                    = NSM_TYPE_FSM,
-    .working_queue.size         = NEQUEUE_SIZEOF(10),
-    .thread.priority            = 1,
-    .thread.name                = "heart_beat"
-};
+    NEPA_DEF_INIT(NULL, &state_init, NSM_TYPE_FSM, NULL, NEQUEUE_SIZEOF(10),
+            "heart_beat", 1);
 
 /*======================================================  GLOBAL VARIABLES  ==*/
 /*============================================  LOCAL FUNCTION DEFINITIONS  ==*/
@@ -131,12 +126,12 @@ static naction state_short(struct nsm * sm, const struct nevent * event)
     switch (event->id) {
         case NSM_ENTRY: {
             netimer_after(&ws->period, PERIOD_SHORT, PERIOD_ELAPSED);
-            bsp_led_on();
+            printf("led_on\n");
 
             return (naction_handled());
         }
         case NSM_EXIT: {
-            bsp_led_off();
+            printf("led_off\n");
 
             return (naction_handled());
         }
@@ -179,12 +174,12 @@ static naction state_long(struct nsm * sm, const struct nevent * event)
     switch (event->id) {
         case NSM_ENTRY: {
             netimer_after(&ws->period, PERIOD_LONG, PERIOD_ELAPSED);
-            bsp_led_on();
+            printf("led_on\n");
 
             return (naction_handled());
         }
         case NSM_EXIT: {
-            bsp_led_off();
+            printf("led_off\n");
 
             return (naction_handled());
         }
@@ -202,23 +197,12 @@ static naction state_long(struct nsm * sm, const struct nevent * event)
 
 int main(void)
 {
-    /* Initialise the Board Support Package for this example.
-     * BSP should setup required clocks, power supply for MCU peripherals and
-     * setup GPIO for driving a state LED.
-     */
-    bsp_init();
-
     /* Initialise the portable core. Portable core handles interrupts, timer
      * and CPU initialisation. After initialisation the core timer is started
      * so event timer can be used in this example.
      */
     ncore_init();
     ncore_timer_enable();
-
-    /* Initialise internal scheduler data structures. Event Processing is
-     * relaying on scheduler to provide efficient task switching.
-     */
-    nsched_init();
 
     /* Initialise a memory for events. Since events are dynamic they require
      * either a heap memory or a pool memory. Currently only Neon Heap and Pool
@@ -235,15 +219,6 @@ int main(void)
      */
     nevent_register_mem(&g_event_mem.mem_class);
 
-    /* Register a user implementated IDLE routine. The idle routine is called
-     * when there are no ready EPA for execution. Keep this routine short as
-     * possible because it's execution time may impact system response time.
-     *
-     * When the NULL pointer is given the system will use default ncore_idle()
-     * portable function which usually puts CPU to sleep.
-     */
-    neds_set_idle(NULL);
-
     /* Create an EPA. The function nepa_create() returns a pointer to newly
      * created EPA, but in this example we don't need it. This pointer can be
      * passed between EPA's in order to send events to each other.
@@ -252,7 +227,7 @@ int main(void)
 
     /* Start the scheduler under Event Processing supervision.
      */
-    neds_run();
+    nsched_run();
 
     return (0);
 }
