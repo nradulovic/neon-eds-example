@@ -42,13 +42,9 @@ static uint8_t                  g_event_mem_storage[1024];
 
 static const struct nepa_define g_blinky_define =
 {
-    .sm.wspace                  = &g_blinky_workspace,
-    .sm.init_state              = &state_init,
-    .sm.type                    = NSM_TYPE_FSM,
-    .working_queue.storage      = g_blinky_queue_storage,
-    .working_queue.size         = sizeof(g_blinky_queue_storage),
-    .thread.priority            = 1,
-    .thread.name                = "blinky"
+    NSM_DEF_INIT(&g_blinky_workspace, &state_init, NSM_TYPE_FSM),
+    NEQUEUE_DEF_INIT(g_blinky_queue_storage, sizeof(g_blinky_queue_storage)),
+    NTHREAD_DEF_INIT("blinky", 1)
 };
 
 /*======================================================  GLOBAL VARIABLES  ==*/
@@ -63,6 +59,7 @@ static naction state_init(struct nsm * sm, const struct nevent * event)
         case NSM_INIT: {
             netimer_init(&ws->period);
             netimer_every(&ws->period, BLINKY_PERIOD, BLINKY_PERIOD_ELAPSED);
+            bsp_led_init();
 
             return (naction_transit_to(sm, state_on));
         }
@@ -117,25 +114,14 @@ static naction state_off(struct nsm * sm, const struct nevent * event)
 /*===========================================  GLOBAL FUNCTION DEFINITIONS  ==*/
 
 
-int main(void)
+int example_blinky(void)
 {
-    /* Initialise the Board Support Package for this example.
-     * BSP should setup required clocks, power supply for MCU peripherals and
-     * setup GPIO for driving a state LED.
-     */
-    bsp_init();
-
     /* Initialise the portable core. Portable core handles interrupts, timer
      * and CPU initialisation. After initialisation the core timer is started
      * so event timer can be used in this example.
      */
     ncore_init();
     ncore_timer_enable();
-
-    /* Initialise internal scheduler data structures. Event Processing is
-     * relaying on scheduler to provide efficient task switching.
-     */
-    nsched_init();
 
     /* Initialise a memory for events. Since events are dynamic they require
      * either a heap memory or a pool memory. Currently only Neon Heap and Pool
@@ -152,7 +138,7 @@ int main(void)
      */
     nevent_register_mem(&g_event_mem.mem_class);
 
-    /* Register a user implementated IDLE routine. The idle routine is called
+    /* Register a user implemented IDLE routine. The idle routine is called
      * when there are no ready EPA for execution. Keep this routine short as
      * possible because it's execution time may impact system response time.
      *
