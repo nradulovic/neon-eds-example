@@ -134,7 +134,7 @@ int main(void)
      */
     nepa_init(&g_blinky_epa, &g_blinky_define);
 
-    nsched_run();
+    nthread_schedule();
 
     return (0);
 }

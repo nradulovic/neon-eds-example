@@ -227,7 +227,7 @@ int main(void)
 
     /* Start the scheduler under Event Processing supervision.
      */
-    nsched_run();
+    nthread_schedule();
 
     return (0);
 }
